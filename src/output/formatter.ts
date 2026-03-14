@@ -90,6 +90,7 @@ export function formatHelpJSON(): string {
           description: "Extract text from PDF files",
           options: {
             "--text": "Output as plain text instead of JSON",
+            "--json": "Output as JSON (force agent mode)",
             "--deep": "Force OCR extraction (slower but 100% text recovery)",
             "--pages": "Page range (e.g., 1-5 or 1,3,5)",
             "--verbose": "Include metadata in output",
