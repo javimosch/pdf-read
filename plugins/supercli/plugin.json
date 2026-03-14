@@ -31,6 +31,22 @@
           "required": true
         }
       ]
+    },
+    {
+      "namespace": "pdfread",
+      "resource": "_",
+      "action": "_",
+      "description": "Passthrough to pdf-read CLI",
+      "adapter": "process",
+      "adapterConfig": {
+        "command": "pdf-read",
+        "baseArgs": ["read"],
+        "passthrough": true,
+        "parseJson": true,
+        "timeout_ms": 60000,
+        "nonTtyBaseArgs": ["--json"]
+      },
+      "args": []
     }
   ]
 }
