@@ -3,4 +3,4 @@ test.pdf
 *.pdf
 dist
 test_ocr
-ref-*
+!ref-*
