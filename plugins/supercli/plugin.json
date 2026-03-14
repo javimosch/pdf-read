@@ -4,8 +4,8 @@
   "description": "Agent-friendly CLI for PDF text extraction with OCR fallback",
   "source": "https://github.com/javimosch/pdf-read",
   "checks": [
-    { "type": "binary", "name": "pdftotext" },
-    { "type": "binary", "name": "pdftoppm" },
+    { "type": "binary", "name": "pdftotext", "args": ["-v"] },
+    { "type": "binary", "name": "pdftoppm", "args": ["-v"] },
     { "type": "binary", "name": "pdf-read" }
   ],
   "commands": [
@@ -24,13 +24,7 @@
         "nonTtyBaseArgs": ["--json"],
         "missingDependencyHelp": "Please install pdf-read and poppler-utils (pdftotext/pdftoppm)."
       },
-      "args": [
-        {
-          "name": "file",
-          "description": "Path to the PDF file",
-          "required": true
-        }
-      ]
+      "args": []
     },
     {
       "namespace": "pdfread",
