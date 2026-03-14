@@ -18,13 +18,20 @@
       "adapterConfig": {
         "command": "pdf-read",
         "baseArgs": ["read"],
-        "passthrough": true,
+        "positionalArgs": ["file"],
         "parseJson": true,
         "timeout_ms": 60000,
+        "cwd": "invoke_cwd",
         "nonTtyBaseArgs": ["--json"],
         "missingDependencyHelp": "Please install pdf-read and poppler-utils (pdftotext/pdftoppm)."
       },
-      "args": []
+      "args": [
+        {
+          "name": "file",
+          "description": "Path to the PDF file",
+          "required": true
+        }
+      ]
     },
     {
       "namespace": "pdfread",
@@ -38,6 +45,7 @@
         "passthrough": true,
         "parseJson": true,
         "timeout_ms": 60000,
+        "cwd": "invoke_cwd",
         "nonTtyBaseArgs": ["--json"]
       },
       "args": []
