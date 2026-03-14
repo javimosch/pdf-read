@@ -13,6 +13,7 @@ import {
 
 interface ReadOptions {
   text: boolean;
+  json: boolean;
   deep: boolean;
   pages?: string;
   verbose: boolean;
@@ -71,20 +72,31 @@ export function createReadCommand(): Command {
   cmd
     .description("Extract text from PDF files")
     .option("-t, --text", "Output as plain text instead of JSON")
+    .option("--json", "Output as JSON (force agent mode)")
     .option("--deep", "Force OCR extraction (slower but 100% text recovery)")
     .option("-p, --pages <range>", "Page range (e.g., 1-5)")
     .option("-v, --verbose", "Include metadata in output")
     .option("--help-json", "Output help as JSON (for agent discovery)")
     .argument("[file]", "PDF file path")
     .action(async (filePath: string | undefined, options: ReadOptions) => {
+      const parentOptions = cmd.parent?.opts() || {};
+      const forceJson = options.json || parentOptions.json;
+      const isAgentMode =
+        !process.stdout.isTTY || forceJson || options.helpJson;
+
       if (options.helpJson) {
         console.log(formatHelpJSON());
         process.exit(ExitCode.SUCCESS);
       }
 
       if (!filePath) {
-        cmd.help();
-        return;
+        if (isAgentMode) {
+          console.log(formatHelpJSON());
+          process.exit(ExitCode.SUCCESS);
+        } else {
+          cmd.help();
+          return;
+        }
       }
 
       const startTime = Date.now();
@@ -94,7 +106,11 @@ export function createReadCommand(): Command {
           "FILE_NOT_FOUND" as ErrorTypeKey,
           `File not found: ${filePath}`,
         );
-        console.error(JSON.stringify({ error: err }, null, 2));
+        if (isAgentMode) {
+          console.log(JSON.stringify({ error: err }, null, 2));
+        } else {
+          console.error(JSON.stringify({ error: err }, null, 2));
+        }
         process.exit(ExitCode.FILE_NOT_FOUND);
       }
 
@@ -104,7 +120,11 @@ export function createReadCommand(): Command {
           "NOT_A_PDF" as ErrorTypeKey,
           `Not a PDF file: ${filePath}`,
         );
-        console.error(JSON.stringify({ error: err }, null, 2));
+        if (isAgentMode) {
+          console.log(JSON.stringify({ error: err }, null, 2));
+        } else {
+          console.error(JSON.stringify({ error: err }, null, 2));
+        }
         process.exit(ExitCode.NOT_A_PDF);
       }
 
@@ -113,16 +133,18 @@ export function createReadCommand(): Command {
       let method: "native" | "ocr" = "native";
 
       try {
-        process.stderr.write("Extracting text...\n");
+        if (!isAgentMode) process.stderr.write("Extracting text...\n");
 
         if (options.deep) {
-          process.stderr.write("Using OCR extraction...\n");
+          if (!isAgentMode) process.stderr.write("Using OCR extraction...\n");
           result = await extractWithOCR(filePath, {
             ...pageOptions,
             onProgress: (progress) => {
-              process.stderr.write(
-                `OCR Progress (Page ${progress.page}): ${Math.round(progress.progress * 100)}%\n`,
-              );
+              if (!isAgentMode) {
+                process.stderr.write(
+                  `OCR Progress (Page ${progress.page}): ${Math.round(progress.progress * 100)}%\n`,
+                );
+              }
             },
           });
           method = "ocr";
@@ -135,23 +157,29 @@ export function createReadCommand(): Command {
               : 0;
 
           if (avgCharsPerPage < MIN_CHARS_FOR_NATIVE && !options.deep) {
-            process.stderr.write(
-              `Low text density detected (${avgCharsPerPage} chars/page). Trying OCR...\n`,
-            );
+            if (!isAgentMode) {
+              process.stderr.write(
+                `Low text density detected (${avgCharsPerPage} chars/page). Trying OCR...\n`,
+              );
+            }
             try {
               result = await extractWithOCR(filePath, {
                 ...pageOptions,
                 onProgress: (progress) => {
-                  process.stderr.write(
-                    `OCR Progress (Page ${progress.page}): ${Math.round(progress.progress * 100)}%\n`,
-                  );
+                  if (!isAgentMode) {
+                    process.stderr.write(
+                      `OCR Progress (Page ${progress.page}): ${Math.round(progress.progress * 100)}%\n`,
+                    );
+                  }
                 },
               });
               method = "ocr";
             } catch (ocrErr) {
-              process.stderr.write(
-                `OCR failed, using native extraction: ${ocrErr}\n`,
-              );
+              if (!isAgentMode) {
+                process.stderr.write(
+                  `OCR failed, using native extraction: ${ocrErr}\n`,
+                );
+              }
             }
           }
         }
@@ -161,13 +189,19 @@ export function createReadCommand(): Command {
             "NO_TEXT_EXTRACTED" as ErrorTypeKey,
             "No text could be extracted from the PDF",
           );
-          console.error(JSON.stringify({ error: err }, null, 2));
+          if (isAgentMode) {
+            console.log(JSON.stringify({ error: err }, null, 2));
+          } else {
+            console.error(JSON.stringify({ error: err }, null, 2));
+          }
           process.exit(ExitCode.NO_TEXT_EXTRACTED);
         }
 
         const extractionTimeMs = Date.now() - startTime;
 
-        if (options.text) {
+        const outputAsText = options.text && !forceJson;
+
+        if (outputAsText) {
           console.log(
             formatText(
               filePath,
@@ -212,7 +246,11 @@ export function createReadCommand(): Command {
           "INTERNAL_ERROR" as ErrorTypeKey,
           error.message || "Unknown error occurred",
         );
-        console.error(JSON.stringify({ error: extError }, null, 2));
+        if (isAgentMode) {
+          console.log(JSON.stringify({ error: extError }, null, 2));
+        } else {
+          console.error(JSON.stringify({ error: extError }, null, 2));
+        }
         process.exit(ExitCode.INTERNAL_ERROR);
       }
     });
