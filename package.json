@@ -1,0 +1,35 @@
+{
+  "name": "pdf-read",
+  "version": "1.0.0",
+  "description": "Agent-friendly CLI for PDF text extraction with OCR fallback",
+  "main": "dist/index.js",
+  "bin": {
+    "pdf-read": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "pdf",
+    "ocr",
+    "cli",
+    "text-extraction",
+    "agent"
+  ],
+  "author": "Javier Leandro Arancibia <arancibiajav@gmail.com",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "canvas": "npm:@napi-rs/canvas@^0.1.52",
+    "commander": "^11.1.0",
+    "pdf-lib": "^1.17.1",
+    "pdf-parse": "^1.1.1",
+    "pdfjs-dist": "^3.11.174",
+    "tesseract.js": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pdf-read | Agent-Friendly PDF Extraction</title>
+    <style>
+        :root {
+            --bg: #0a0a0c;
+            --text: #e0e0e6;
+            --primary: #4f46e5;
+            --secondary: #22d3ee;
+            --accent: #f43f5e;
+            --code-bg: #1a1a1f;
+            --border: #2e2e36;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hero {
+            width: 100%;
+            padding: 100px 20px;
+            background: linear-gradient(135deg, #111116 0%, #0a0a0c 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: -20%;
+            left: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin: 0;
+            background: linear-gradient(to right, var(--text), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .tagline {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            margin: 20px 0 40px;
+        }
+
+        .cta {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.39);
+        }
+
+        .cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
+        }
+
+        main {
+            max-width: 900px;
+            width: 100%;
+            padding: 60px 20px;
+        }
+
+        section {
+            margin-bottom: 80px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--primary);
+            padding-left: 20px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background-color: #16161a;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: border-color 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--secondary);
+        }
+
+        .feature-card h3 {
+            margin-top: 0;
+            color: var(--secondary);
+        }
+
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            background-color: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #fca5a5;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            line-height: 1.4;
+        }
+
+        .cli-ref table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .cli-ref th, .cli-ref td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cli-ref th {
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        footer {
+            width: 100%;
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #1e1b4b;
+            color: #a5b4fc;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="hero-content">
+            <span class="badge">Version 1.0.0</span>
+            <h1>pdf-read</h1>
+            <p class="tagline">The agent-first CLI for blazing fast PDF text extraction with bulletproof OCR fallback.</p>
+            <a href="#install" class="cta">Get Started</a>
+        </div>
+    </div>
+
+    <main>
+        <section id="features">
+            <h2>Why pdf-read?</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>Agent-Friendly</h3>
+                    <p>Designed for AI agents. JSON-first, stable schemas, and semantic exit codes.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Fast Native Engine</h3>
+                    <p>Uses <code>pdftotext</code> for near-instant extraction from text-based PDFs.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>OCR Fallback</h3>
+                    <p>Scanned doc? No problem. Automatically falls back to Tesseract OCR when text is sparse.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="install">
+            <h2>Installation</h2>
+            <pre><code>npm install -g pdf-read</code></pre>
+            <p>Ensure you have <code>poppler-utils</code> installed on your system:</p>
+            <pre><code># Ubuntu/Debian
+sudo apt-get install poppler-utils tesseract-ocr</code></pre>
+        </section>
+
+        <section id="cli">
+            <h2>CLI Reference</h2>
+            <p>Usage: <code>pdf-read read [options] [file]</code></p>
+
+            <div class="cli-ref">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>-t, --text</code></td>
+                            <td>Output as plain text instead of JSON</td>
+                        </tr>
+                        <tr>
+                            <td><code>--deep</code></td>
+                            <td>Force OCR extraction (slower but 100% text recovery)</td>
+                        </tr>
+                        <tr>
+                            <td><code>-p, --pages &lt;range&gt;</code></td>
+                            <td>Page range (e.g., 1-5 or 1,3,5)</td>
+                        </tr>
+                        <tr>
+                            <td><code>-v, --verbose</code></td>
+                            <td>Include rich metadata in output</td>
+                        </tr>
+                        <tr>
+                            <td><code>--help-json</code></td>
+                            <td>Output help as machine-readable JSON</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="example">
+            <h2>Example Output</h2>
+            <pre><code>{
+  "version": "1.0",
+  "file": "document.pdf",
+  "pages": 1,
+  "extracted": {
+    "method": "native",
+    "text": "Hello World..."
+  },
+  "stats": {
+    "totalChars": 1250,
+    "charsPerPageAvg": 1250,
+    "extractionTimeMs": 18
+  }
+}</code></pre>
+        </section>
+
+        <section id="exit-codes">
+            <h2>Semantic Exit Codes</h2>
+            <div class="cli-ref">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Category</th>
+                            <th>Meaning</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>0</code></td>
+                            <td>Success</td>
+                            <td>Operation completed successfully</td>
+                        </tr>
+                        <tr>
+                            <td><code>80</code></td>
+                            <td>User Error</td>
+                            <td>Invalid argument or syntax</td>
+                        </tr>
+                        <tr>
+                            <td><code>91</code></td>
+                            <td>Resource Error</td>
+                            <td>File not found</td>
+                        </tr>
+                        <tr>
+                            <td><code>92</code></td>
+                            <td>Resource Error</td>
+                            <td>Not a PDF file</td>
+                        </tr>
+                        <tr>
+                            <td><code>93</code></td>
+                            <td>Extraction Error</td>
+                            <td>No text could be extracted (even with OCR)</td>
+                        </tr>
+                        <tr>
+                            <td><code>106</code></td>
+                            <td>System Error</td>
+                            <td>OCR engine failed (Tesseract)</td>
+                        </tr>
+                        <tr>
+                            <td><code>110</code></td>
+                            <td>Software Error</td>
+                            <td>Internal software error / bug</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        Built for the agent-first future. Licensed under MIT.
+    </footer>
+</body>
+</html>

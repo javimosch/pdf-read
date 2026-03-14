@@ -1,0 +1,6 @@
+node_modules
+test.pdf
+*.pdf
+dist
+test_ocr
+ref-*
